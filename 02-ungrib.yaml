@@ -1,0 +1,16 @@
+anlfile: "{{ rundir }}/anl.grib2"
+data:
+  "{{ anlfile }}": "{{ rootdir }}/01/anl.grib2"
+hh: '{{ cycle.strftime("%H") }}'
+rundir: '{{ rootdir }}/02'
+ungrib:
+  execution:
+    executable: ungrib
+  gribfiles:
+    - "{{ anlfile }}"
+  rundir: "{{ rundir }}"
+  start: "{{ cycle }}"
+  step: 1
+  stop: "{{ cycle }}"
+  vtable: '{{ "WPSFILES" | env }}/Vtable.GFS'
+yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
