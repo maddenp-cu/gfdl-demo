@@ -1,5 +1,5 @@
 data:
-  "{{ rundir }}/anl.grib2": "{{ rootdir }}/00/anl.grib2"
+  "{{ rundir }}/anl.grib2": https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{{ yyyymmdd }}/{{ hh }}/atmos/gfs.t{{ hh }}.pgrb2.0p25.f000
 hh: '{{ cycle.strftime("%H") }}'
 rootdir: /gpfs/f6/wrfruc/scratch/Paul.Madden/gfdl-demo
 rundir: '{{ rootdir }}/01'

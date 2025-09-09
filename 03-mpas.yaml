@@ -1,0 +1,73 @@
+assets_dir: /gpfs/f6/wrfruc/scratch/Paul.Madden/assets
+hh: '{{ cycle.strftime("%H") }}'
+mpas_dir: /gpfs/f6/wrfruc/scratch/Paul.Madden/MPAS-Model
+mpas_init:
+#   boundary_conditions:
+#     interval_hours: 6
+#     length: 6
+#     offset: 0
+#     path: /path/to/boundary/condition/files
+  execution:
+    batchargs:
+      cores: 8
+      walltime: "00:10:00"
+    envcmds:
+      - module use /ncrc/proj/epic/spack-stack/c6/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core
+      - module load stack-intel/2023.2.0 stack-cray-mpich/8.1.29 parallelio/2.5.10
+    executable: "{{ mpas_dir }}/init_atmosphere"
+    mpiargs:
+      - "--ntasks={{ mpas_init.execution.batchargs.cores }}"
+    mpicmd: srun
+  files_to_copy:
+    graph.info.part.{{ mpas_init.execution.batchargs.cores }}: "{{ assets_dir }}/x1.2562.graph.info.part.{{ mpas_init.execution.batchargs.cores }}"
+    static.nc: "{{ assets_dir}}/x1.2562.static.nc"
+    stream_list.atmosphere.diagnostics: "{{ mpas_dir }}/stream_list.atmosphere.diagnostics"
+    stream_list.atmosphere.output: "{{ mpas_dir }}/stream_list.atmosphere.output"
+    stream_list.atmosphere.surface: "{{ mpas_dir }}/stream_list.atmosphere.surface"
+  files_to_link:
+    CAM_ABS_DATA.DBL: "{{ mpas_dir }}/CAM_ABS_DATA.DBL"
+    CAM_AEROPT_DATA.DBL: "{{ mpas_dir }}/CAM_AEROPT_DATA.DBL"
+    GENPARM.TBL: "{{ mpas_dir }}/GENPARM.TBL"
+    LANDUSE.TBL: "{{ mpas_dir }}/LANDUSE.TBL"
+    OZONE_DAT.TBL: "{{ mpas_dir }}/OZONE_DAT.TBL"
+    OZONE_LAT.TBL: "{{ mpas_dir }}/OZONE_LAT.TBL"
+    OZONE_PLEV.TBL: "{{ mpas_dir }}/OZONE_PLEV.TBL"
+    RRTMG_LW_DATA.DBL: "{{ mpas_dir }}/RRTMG_LW_DATA.DBL"
+    RRTMG_LW_DATA: "{{ mpas_dir }}/RRTMG_LW_DATA"
+    RRTMG_SW_DATA.DBL: "{{ mpas_dir }}/RRTMG_SW_DATA.DBL"
+    RRTMG_SW_DATA: "{{ mpas_dir }}/RRTMG_SW_DATA"
+    SOILPARM.TBL: "{{ mpas_dir }}/SOILPARM.TBL"
+    VEGPARM.TBL: "{{ mpas_dir }}/VEGPARM.TBL"
+  namelist:
+    base_file: "{{ mpas_dir }}/namelist.init_atmosphere"
+#     update_values:
+#       data_sources:
+#         config_fg_interval: !int "{{ mpas_init.boundary_conditions['interval_hours'] * 3600 }}"
+#         config_met_prefix: FILE
+#       decomposition:
+#         config_block_decomp_file_prefix: graph.info.part.
+#       nhyd_model:
+#         config_init_case: 9
+#       preproc_stages:
+#         config_native_gwd_static: false
+#         config_static_interp: false
+#       vertical_grid:
+#         config_blend_bdy_terrain: true
+    validate: true
+  rundir: "{{ rundir }}"
+  streams:
+    input:
+      filename_template: static.nc
+      input_interval: initial_only
+      mutable: false
+      type: input
+    output:
+      filename_template: init.nc
+      mutable: false
+      output_interval: initial_only
+      type: output
+platform:
+  account: wrfruc
+  scheduler: slurm
+rundir: '{{ rootdir }}/03'
+yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
