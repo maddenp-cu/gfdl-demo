@@ -1,6 +1,6 @@
 CYCLE = 2025-09-09T00
 
-TARGETS = 00 01 02 03
+TARGETS = 00 01 02 03 04
 
 .PHONY: $(TARGETS)
 
@@ -21,3 +21,7 @@ all:
 03:
 	uw config realize -i 03-mpas-init.yaml -u user.yaml -o 03/experiment.yaml
 	uw mpas_init provisioned_rundir -c 03/experiment.yaml --cycle $(CYCLE)
+
+04:
+	uw config realize -i 04-mpas-init.yaml -u user.yaml -o 04/experiment.yaml
+	uw mpas_init run -c 04/experiment.yaml --cycle $(CYCLE) --batch

@@ -6,7 +6,7 @@ mpas_init:
     interval_hours: 1
     length: 0
     offset: 0
-    path: '{{ rootdir }}/02/FILE:{{ cycle.strftime("%Y-%m-%d_%H") }}'
+    path: '{{ rootdir }}/02'
   execution:
     batchargs:
       cores: 8
