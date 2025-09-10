@@ -19,5 +19,5 @@ all:
 	uw ungrib run -c 02/experiment.yaml --cycle $(CYCLE)
 
 03:
-	uw config realize -i 03-mpas.yaml -u user.yaml -o 03/experiment.yaml
+	uw config realize -i 03-mpas-init.yaml -u user.yaml -o 03/experiment.yaml
 	uw mpas_init provisioned_rundir -c 03/experiment.yaml --cycle $(CYCLE)
