@@ -1,4 +1,6 @@
-TARGETS = 00 01 02
+CYCLE = 2025-09-09T00
+
+TARGETS = 00 01 02 03
 
 .PHONY: $(TARGETS)
 
@@ -9,9 +11,13 @@ all:
 	uw fs copy -c 00-get-data.yaml
 
 01:
-	uw fs copy -c 01-get-data-parameterized.yaml --cycle 2025-09-08T00 --key-path data
+	uw fs copy -c 01-get-data-parameterized.yaml --cycle $(CYCLE) --key-path data
 
 02:
 	uw config realize -i 02-ungrib.yaml -u user.yaml -o 02/experiment.yaml
-	uw fs link -c 02/experiment.yaml --cycle 2025-09-08T00 --key-path data
-	uw ungrib run -c 02/experiment.yaml --cycle 2025-09-08T00
+	uw fs link -c 02/experiment.yaml --cycle $(CYCLE) --key-path data
+	uw ungrib run -c 02/experiment.yaml --cycle $(CYCLE)
+
+03:
+	uw config realize -i 03-mpas.yaml -u user.yaml -o 03/experiment.yaml
+	uw mpas_init provisioned_rundir -c 03/experiment.yaml --cycle $(CYCLE)
