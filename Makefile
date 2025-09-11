@@ -28,4 +28,5 @@ all:
 05:
 	uw config realize -i workflow.yaml -u workflow-user.yaml -o 05/experiment.yaml
 	uw fs copy -c 05/experiment.yaml --key-path data
-# 	uw rocoto realize -c 05/experiment.yaml -o 05/rocoto.xml
+	uw rocoto realize -c 05/experiment.yaml -o 05/rocoto.xml
+	uw rocoto iterate --cycle $(CYCLE) --database 05/rocoto.db --task task_ungrib --workflow 05/rocoto.xml
