@@ -26,6 +26,6 @@ all:
 	SUBDIR=04 uw mpas_init run -c 04/experiment.yaml --cycle $(CYCLE) --batch
 
 05:
-	uw config realize -i workflow.yaml -u user.yaml -o 05/experiment.yaml
-	uw fs copy -c 05/experiment.yaml --cycle $(CYCLE) --key-path data
-	uw rocoto realize -c 05/experiment.yaml -o 05/rocoto.xml
+	uw config realize -i workflow.yaml -u workflow-user.yaml -o 05/experiment.yaml
+	uw fs copy -c 05/experiment.yaml --key-path data
+# 	uw rocoto realize -c 05/experiment.yaml -o 05/rocoto.xml
