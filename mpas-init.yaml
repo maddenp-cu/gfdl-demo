@@ -64,5 +64,5 @@ mpas_init:
       output_interval: initial_only
       type: output
 platform:
-  account: wrfruc
+  account: "{{ account }}"
   scheduler: slurm

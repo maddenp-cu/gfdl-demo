@@ -22,5 +22,5 @@ all:
 	SUBDIR=03 uw mpas_init provisioned_rundir -c 03/experiment.yaml --cycle $(CYCLE)
 
 04:
-	uw config realize -i mpas-init.yaml -u user2.yaml -o 04/experiment.yaml
+	uw config realize -i mpas-init.yaml -u user1.yaml -o 04/experiment.yaml
 	SUBDIR=04 uw mpas_init run -c 04/experiment.yaml --cycle $(CYCLE) --batch
