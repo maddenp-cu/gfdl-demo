@@ -1,0 +1,6 @@
+account: wrfruc
+activate: source /gpfs/f6/wrfruc/scratch/Paul.Madden/conda/etc/profile.d && conda activate gfdl-demo
+assets: /gpfs/f6/wrfruc/scratch/Paul.Madden/assets
+cycle: 2025-09-09T00:00:00
+mpasdir: /gpfs/f6/wrfruc/scratch/Paul.Madden/MPAS-Model
+runroot: /gpfs/f6/wrfruc/scratch/Paul.Madden/gfdl-demo

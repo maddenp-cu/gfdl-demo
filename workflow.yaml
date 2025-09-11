@@ -7,7 +7,7 @@ workflow:
   cycledef:
     - attrs:
         group: default
-      spec: '{{ yyyymmdd }} 202301021200 00:00:00'
+      spec: '{{ yyyymmddhhmm }} {{ yyyymmddhhmm }} 00:00:00'
   log:
     value: '{{ rundir }}/rocoto.log'
   tasks:
