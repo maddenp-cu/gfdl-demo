@@ -3,6 +3,16 @@ data:
   '{{ rundir }}/anl.grib2': https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{{ yyyymmdd }}/{{ hh }}/atmos/gfs.t{{ hh }}z.pgrb2.0p25.f000
 hh: '{{ cycle.strftime("%H") }}'
 rundir: '{{ runroot }}/05'
+ungrib:
+  execution:
+    executable: ungrib
+  gribfiles:
+    - '{{ runroot }}/01/anl.grib2'
+  rundir: '{{ rundir }}'
+  start: '{{ cycle }}'
+  step: 1
+  stop: '{{ cycle }}'
+  vtable: '{{ "WPSFILES" | env }}/Vtable.GFS'
 workflow:
   attrs:
     realtime: false
@@ -19,6 +29,7 @@ workflow:
         cycledefs: default
       account: '{{ account }}'
       command: '{{ activate }} && uw ungrib run -c {{ config }} --cycle {{ cycle.isoformat() }}'
+      join: '{{ rundir }}/ungrib.log.slurm'
       native: -M c6
       nodes: 1:ppn=1
       partition: batch
