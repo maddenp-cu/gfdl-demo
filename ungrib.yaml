@@ -2,9 +2,9 @@ ungrib:
   execution:
     executable: ungrib
   gribfiles:
-    - "{{ runroot }}/01/anl.grib2"
+    - '{{ runroot }}/01/anl.grib2'
   rundir: '{{ runroot }}/02'
-  start: "{{ cycle }}"
+  start: '{{ cycle }}'
   step: 1
-  stop: "{{ cycle }}"
+  stop: '{{ cycle }}'
   vtable: '{{ "WPSFILES" | env }}/Vtable.GFS'

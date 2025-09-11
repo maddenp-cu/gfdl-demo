@@ -9,39 +9,39 @@ mpas_init:
       clusters: c6
       cores: 8
       partition: batch
-      walltime: "00:01:00"
+      walltime: '00:01:00'
     envcmds:
       - module use /ncrc/proj/epic/spack-stack/c6/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core
       - module load stack-intel/2023.2.0 stack-cray-mpich/8.1.29 parallelio/2.5.10
-    executable: "{{ mpasdir }}/init_atmosphere_model"
+    executable: '{{ mpasdir }}/init_atmosphere_model'
     mpiargs:
-      - "--ntasks={{ mpas_init.execution.batchargs.cores }}"
+      - '--ntasks={{ mpas_init.execution.batchargs.cores }}'
     mpicmd: srun
   files_to_copy:
-    graph.info.part.{{ mpas_init.execution.batchargs.cores }}: "{{ assets }}/x1.2562.graph.info.part.{{ mpas_init.execution.batchargs.cores }}"
-    static.nc: "{{ assets}}/x1.2562.static.nc"
-    stream_list.atmosphere.diagnostics: "{{ mpasdir }}/stream_list.atmosphere.diagnostics"
-    stream_list.atmosphere.output: "{{ mpasdir }}/stream_list.atmosphere.output"
-    stream_list.atmosphere.surface: "{{ mpasdir }}/stream_list.atmosphere.surface"
+    graph.info.part.{{ mpas_init.execution.batchargs.cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ mpas_init.execution.batchargs.cores }}'
+    static.nc: '{{ assets}}/x1.2562.static.nc'
+    stream_list.atmosphere.diagnostics: '{{ mpasdir }}/stream_list.atmosphere.diagnostics'
+    stream_list.atmosphere.output: '{{ mpasdir }}/stream_list.atmosphere.output'
+    stream_list.atmosphere.surface: '{{ mpasdir }}/stream_list.atmosphere.surface'
   files_to_link:
-    CAM_ABS_DATA.DBL: "{{ mpasdir }}/CAM_ABS_DATA.DBL"
-    CAM_AEROPT_DATA.DBL: "{{ mpasdir }}/CAM_AEROPT_DATA.DBL"
-    GENPARM.TBL: "{{ mpasdir }}/GENPARM.TBL"
-    LANDUSE.TBL: "{{ mpasdir }}/LANDUSE.TBL"
-    OZONE_DAT.TBL: "{{ mpasdir }}/OZONE_DAT.TBL"
-    OZONE_LAT.TBL: "{{ mpasdir }}/OZONE_LAT.TBL"
-    OZONE_PLEV.TBL: "{{ mpasdir }}/OZONE_PLEV.TBL"
-    RRTMG_LW_DATA.DBL: "{{ mpasdir }}/RRTMG_LW_DATA.DBL"
-    RRTMG_LW_DATA: "{{ mpasdir }}/RRTMG_LW_DATA"
-    RRTMG_SW_DATA.DBL: "{{ mpasdir }}/RRTMG_SW_DATA.DBL"
-    RRTMG_SW_DATA: "{{ mpasdir }}/RRTMG_SW_DATA"
-    SOILPARM.TBL: "{{ mpasdir }}/SOILPARM.TBL"
-    VEGPARM.TBL: "{{ mpasdir }}/VEGPARM.TBL"
+    CAM_ABS_DATA.DBL: '{{ mpasdir }}/CAM_ABS_DATA.DBL'
+    CAM_AEROPT_DATA.DBL: '{{ mpasdir }}/CAM_AEROPT_DATA.DBL'
+    GENPARM.TBL: '{{ mpasdir }}/GENPARM.TBL'
+    LANDUSE.TBL: '{{ mpasdir }}/LANDUSE.TBL'
+    OZONE_DAT.TBL: '{{ mpasdir }}/OZONE_DAT.TBL'
+    OZONE_LAT.TBL: '{{ mpasdir }}/OZONE_LAT.TBL'
+    OZONE_PLEV.TBL: '{{ mpasdir }}/OZONE_PLEV.TBL'
+    RRTMG_LW_DATA.DBL: '{{ mpasdir }}/RRTMG_LW_DATA.DBL'
+    RRTMG_LW_DATA: '{{ mpasdir }}/RRTMG_LW_DATA'
+    RRTMG_SW_DATA.DBL: '{{ mpasdir }}/RRTMG_SW_DATA.DBL'
+    RRTMG_SW_DATA: '{{ mpasdir }}/RRTMG_SW_DATA'
+    SOILPARM.TBL: '{{ mpasdir }}/SOILPARM.TBL'
+    VEGPARM.TBL: '{{ mpasdir }}/VEGPARM.TBL'
   namelist:
-    base_file: "{{ mpasdir }}/namelist.init_atmosphere"
+    base_file: '{{ mpasdir }}/namelist.init_atmosphere'
     update_values:
       data_sources:
-        config_fg_interval: !int "{{ mpas_init.boundary_conditions['interval_hours'] * 3600 }}"
+        config_fg_interval: !int '{{ mpas_init.boundary_conditions["interval_hours"] * 3600 }}'
         config_met_prefix: FILE
       decomposition:
         config_block_decomp_file_prefix: graph.info.part.
@@ -64,5 +64,5 @@ mpas_init:
       output_interval: initial_only
       type: output
 platform:
-  account: "{{ account }}"
+  account: '{{ account }}'
   scheduler: slurm
