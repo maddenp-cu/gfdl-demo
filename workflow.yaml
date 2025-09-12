@@ -21,20 +21,7 @@ mpas_init:
     stream_list.atmosphere.diagnostics: '{{ mpasdir }}/stream_list.atmosphere.diagnostics'
     stream_list.atmosphere.output: '{{ mpasdir }}/stream_list.atmosphere.output'
     stream_list.atmosphere.surface: '{{ mpasdir }}/stream_list.atmosphere.surface'
-  files_to_link:
-    CAM_ABS_DATA.DBL: '{{ mpasdir }}/CAM_ABS_DATA.DBL'
-    CAM_AEROPT_DATA.DBL: '{{ mpasdir }}/CAM_AEROPT_DATA.DBL'
-    GENPARM.TBL: '{{ mpasdir }}/GENPARM.TBL'
-    LANDUSE.TBL: '{{ mpasdir }}/LANDUSE.TBL'
-    OZONE_DAT.TBL: '{{ mpasdir }}/OZONE_DAT.TBL'
-    OZONE_LAT.TBL: '{{ mpasdir }}/OZONE_LAT.TBL'
-    OZONE_PLEV.TBL: '{{ mpasdir }}/OZONE_PLEV.TBL'
-    RRTMG_LW_DATA.DBL: '{{ mpasdir }}/RRTMG_LW_DATA.DBL'
-    RRTMG_LW_DATA: '{{ mpasdir }}/RRTMG_LW_DATA'
-    RRTMG_SW_DATA.DBL: '{{ mpasdir }}/RRTMG_SW_DATA.DBL'
-    RRTMG_SW_DATA: '{{ mpasdir }}/RRTMG_SW_DATA'
-    SOILPARM.TBL: '{{ mpasdir }}/SOILPARM.TBL'
-    VEGPARM.TBL: '{{ mpasdir }}/VEGPARM.TBL'
+  files_to_link: !dict "[{% for x in init_files %}[{{ x }},{{ mpasdir }}/{{ x }}],{% endfor %}]"
   namelist:
     base_file: '{{ mpasdir }}/namelist.init_atmosphere'
     update_values:
@@ -62,6 +49,20 @@ mpas_init:
       output_interval: initial_only
       type: output
 init_cores: 8
+init_files:
+  - CAM_ABS_DATA.DBL
+  - CAM_AEROPT_DATA.DBL
+  - GENPARM.TBL
+  - LANDUSE.TBL
+  - OZONE_DAT.TBL
+  - OZONE_LAT.TBL
+  - OZONE_PLEV.TBL
+  - RRTMG_LW_DATA.DBL
+  - RRTMG_LW_DATA
+  - RRTMG_SW_DATA.DBL
+  - RRTMG_SW_DATA
+  - SOILPARM.TBL
+  - VEGPARM.TBL
 platform:
   account: '{{ account }}'
   scheduler: '{{ scheduler }}'
