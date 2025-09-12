@@ -1,28 +1,26 @@
-config: '{{ rundir }}/experiment.yaml'
 data:
-  '{{ rundir }}/anl.grib2': https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{{ yyyymmdd }}/{{ hh }}/atmos/gfs.t{{ hh }}z.pgrb2.0p25.f000
-hh: '{{ cycle.strftime("%H") }}'
+  '{{ val.rundir }}/anl.grib2': https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{{ val.yyyymmdd }}/{{ val.hh }}/atmos/gfs.t{{ val.hh }}z.pgrb2.0p25.f000
 drivers:
   mpas_init:
     boundary_conditions:
       interval_hours: 1
       length: 0
       offset: 0
-      path: '{{ rundir }}'
+      path: '{{ val.rundir }}'
     execution:
       envcmds:
         - module use /ncrc/proj/epic/spack-stack/c6/spack-stack-1.6.0/envs/unified-env/install/modulefiles/Core
         - module load stack-intel/2023.2.0 stack-cray-mpich/8.1.29 parallelio/2.5.10
       executable: '{{ mpasdir }}/init_atmosphere_model'
-      mpiargs: ['--ntasks={{ init_cores }}']
+      mpiargs: ['--ntasks={{ val.init.cores }}']
       mpicmd: srun
     files_to_copy:
-      graph.info.part.{{ init_cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ init_cores }}'
+      graph.info.part.{{ val.init.cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ val.init.cores }}'
       '{{ drivers.mpas_init.streams.input.filename_template }}': '{{ assets}}/x1.2562.static.nc'
       stream_list.atmosphere.diagnostics: '{{ mpasdir }}/stream_list.atmosphere.diagnostics'
       stream_list.atmosphere.output: '{{ mpasdir }}/stream_list.atmosphere.output'
       stream_list.atmosphere.surface: '{{ mpasdir }}/stream_list.atmosphere.surface'
-    files_to_link: !dict "[{% for x in init_files %}[{{ x }},{{ mpasdir }}/{{ x }}],{% endfor %}]"
+    files_to_link: !dict "[{% for x in val.init.files %}[{{ x }},{{ mpasdir }}/{{ x }}],{% endfor %}]"
     namelist:
       base_file: '{{ mpasdir }}/namelist.init_atmosphere'
       update_values:
@@ -37,7 +35,7 @@ drivers:
           config_native_gwd_static: false
           config_static_interp: false
       validate: true
-    rundir: '{{ rundir }}'
+    rundir: '{{ val.rundir }}'
     streams:
       input:
         filename_template: static.nc
@@ -52,38 +50,44 @@ drivers:
   ungrib:
     execution:
       executable: ungrib
-    gribfiles: ['{{ rundir }}/anl.grib2']
-    rundir: '{{ rundir }}'
+    gribfiles: ['{{ val.rundir }}/anl.grib2']
+    rundir: '{{ val.rundir }}'
     start: '{{ cycle }}'
     step: 1
     stop: '{{ cycle }}'
     vtable: '{{ "WPSFILES" | env }}/Vtable.GFS'
-init_cores: 8
-init_files:
-  - CAM_ABS_DATA.DBL
-  - CAM_AEROPT_DATA.DBL
-  - GENPARM.TBL
-  - LANDUSE.TBL
-  - OZONE_DAT.TBL
-  - OZONE_LAT.TBL
-  - OZONE_PLEV.TBL
-  - RRTMG_LW_DATA.DBL
-  - RRTMG_LW_DATA
-  - RRTMG_SW_DATA.DBL
-  - RRTMG_SW_DATA
-  - SOILPARM.TBL
-  - VEGPARM.TBL
 platform:
   account: '{{ account }}'
   scheduler: '{{ scheduler }}'
-rundir: '{{ runroot }}/05'
-task_defaults: &task_defaults
-  attrs:
-    cycledefs: default
-    maxtries: 1
-  account: '{{ account }}'
-  native: -M c6
-  walltime: "00:01:00"
+val:
+  config: '{{ val.rundir }}/experiment.yaml'
+  hh: '{{ cycle.strftime("%H") }}'
+  init:
+    cores: 8
+    files:
+      - CAM_ABS_DATA.DBL
+      - CAM_AEROPT_DATA.DBL
+      - GENPARM.TBL
+      - LANDUSE.TBL
+      - OZONE_DAT.TBL
+      - OZONE_LAT.TBL
+      - OZONE_PLEV.TBL
+      - RRTMG_LW_DATA.DBL
+      - RRTMG_LW_DATA
+      - RRTMG_SW_DATA.DBL
+      - RRTMG_SW_DATA
+      - SOILPARM.TBL
+      - VEGPARM.TBL
+  rundir: '{{ runroot }}/05'
+  task_defaults: &task_defaults
+    attrs:
+      cycledefs: default
+      maxtries: 1
+    account: '{{ account }}'
+    native: -M c6
+    walltime: "00:01:00"
+  yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
+  yyyymmddhhmm: '{{ cycle.strftime("%Y%m%d%H%M") }}'
 workflow:
   attrs:
     realtime: false
@@ -91,31 +95,29 @@ workflow:
   cycledef:
     - attrs:
         group: default
-      spec: '{{ yyyymmddhhmm }} {{ yyyymmddhhmm }} 00:00:01'
+      spec: '{{ val.yyyymmddhhmm }} {{ val.yyyymmddhhmm }} 00:00:01'
   log:
-    value: '{{ rundir }}/rocoto.log'
+    value: '{{ val.rundir }}/rocoto.log'
   tasks:
     task_mpas_init:
       <<: *task_defaults
       command: '
       {{ activate }}
-      && uw mpas_init run -c {{ config }} --cycle {{ cycle.isoformat() }} --key-path drivers
-      && test -e {{ rundir }}/{{ drivers.mpas_init.streams.output.filename_template }}
+      && uw mpas_init run -c {{ val.config }} --cycle {{ cycle.isoformat() }} --key-path drivers
+      && test -e {{ val.rundir }}/{{ drivers.mpas_init.streams.output.filename_template }}
       '
       dependency:
         taskdep:
           attrs:
             task: ungrib
-      join: '{{ rundir }}/slurm.mpas_init'
-      nodes: 1:ppn={{ init_cores }}
+      join: '{{ val.rundir }}/slurm.mpas_init'
+      nodes: 1:ppn={{ val.init.cores }}
     task_ungrib:
       <<: *task_defaults
       command: '
       {{ activate }}
-      && uw ungrib run -c {{ config }} --cycle {{ cycle.isoformat() }} --key-path drivers
-      && test -e {{ rundir }}/{{ drivers.mpas_init.namelist.update_values.data_sources.config_met_prefix }}:{{ cycle.strftime("%Y-%m-%d_%H") }}
+      && uw ungrib run -c {{ val.config }} --cycle {{ cycle.isoformat() }} --key-path drivers
+      && test -e {{ val.rundir }}/{{ drivers.mpas_init.namelist.update_values.data_sources.config_met_prefix }}:{{ cycle.strftime("%Y-%m-%d_%H") }}
       '
-      join: '{{ rundir }}/slurm.ungrib'
+      join: '{{ val.rundir }}/slurm.ungrib'
       nodes: 1:ppn=1
-yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
-yyyymmddhhmm: '{{ cycle.strftime("%Y%m%d%H%M") }}'
