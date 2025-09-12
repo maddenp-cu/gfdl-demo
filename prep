@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+wget --quiet https://github.com/conda-forge/miniforge/releases/download/25.3.1-0/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh -bfp conda >>install.log 2>&1
+rm Miniforge3-Linux-x86_64.sh
+source conda/etc/profile.d/conda.sh
+conda activate
+conda create -y -n demo -c paul.madden rocoto ungrib uwtools >>install.log 2>&1
+conda activate demo
+uw --version
