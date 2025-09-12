@@ -1,6 +1,7 @@
 account: wrfruc
 activate: source /gpfs/f6/wrfruc/scratch/Paul.Madden/conda/etc/profile.d/conda.sh && conda activate gfdl-demo
 assets: /gpfs/f6/wrfruc/scratch/Paul.Madden/assets
-cycle: '{{ "CYCLE" | env }}'
+cycle: !datetime '{{ "CYCLE" | env }}'
 mpasdir: /gpfs/f6/wrfruc/scratch/Paul.Madden/MPAS-Model
 runroot: /gpfs/f6/wrfruc/scratch/Paul.Madden/gfdl-demo
+scheduler: slurm

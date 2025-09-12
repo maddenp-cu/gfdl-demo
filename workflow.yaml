@@ -14,10 +14,10 @@ mpas_init:
       - module load stack-intel/2023.2.0 stack-cray-mpich/8.1.29 parallelio/2.5.10
     executable: '{{ mpasdir }}/init_atmosphere_model'
     mpiargs:
-      - '--ntasks={{ mpas_init.execution.batchargs.cores }}'
+      - '--ntasks={{ init_cores }}'
     mpicmd: srun
   files_to_copy:
-    graph.info.part.{{ mpas_init.execution.batchargs.cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ mpas_init.execution.batchargs.cores }}'
+    graph.info.part.{{ init_cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ init_cores }}'
     '{{ mpas_init.streams.input.filename_template }}': '{{ assets}}/x1.2562.static.nc'
     stream_list.atmosphere.diagnostics: '{{ mpasdir }}/stream_list.atmosphere.diagnostics'
     stream_list.atmosphere.output: '{{ mpasdir }}/stream_list.atmosphere.output'
@@ -62,15 +62,16 @@ mpas_init:
       mutable: false
       output_interval: initial_only
       type: output
+init_cores: 8
 platform:
   account: '{{ account }}'
-  scheduler: slurm
+  scheduler: '{{ scheduler }}'
 rundir: '{{ runroot }}/05'
 ungrib:
   execution:
     executable: ungrib
   gribfiles:
-    - '{{ runroot }}/01/anl.grib2'
+    - '{{ rundir }}/anl.grib2'
   rundir: '{{ rundir }}'
   start: '{{ cycle }}'
   step: 1
@@ -79,7 +80,7 @@ ungrib:
 workflow:
   attrs:
     realtime: false
-    scheduler: slurm
+    scheduler: '{{ scheduler }}'
   cycledef:
     - attrs:
         group: default
@@ -90,13 +91,14 @@ workflow:
     task_mpas_init:
       attrs:
         cycledefs: default
+        maxtries: 1
       account: '{{ account }}'
-      command: '{{ activate }} && uw mpas_init run -c {{ config }} --cycle {{ cycle.isoformat() }}'
+      command: '{{ activate }} && uw mpas_init run -c {{ config }} --cycle {{ cycle.isoformat() }} && test -e {{ rundir }}/{{ mpas_init.streams.output.filename_template }}'
       dependency:
         taskdep:
           attrs:
             task: ungrib
-      join: '{{ rundir }}/mpas_init.log.slurm'
+      join: '{{ rundir }}/slurm.mpas_init'
       native: -M c6
       nodes: 1:ppn=1
       partition: batch
@@ -104,11 +106,12 @@ workflow:
     task_ungrib:
       attrs:
         cycledefs: default
+        maxtries: 1
       account: '{{ account }}'
-      command: '{{ activate }} && uw ungrib run -c {{ config }} --cycle {{ cycle.isoformat() }}'
-      join: '{{ rundir }}/ungrib.log.slurm'
+      command: '{{ activate }} && uw ungrib run -c {{ config }} --cycle {{ cycle.isoformat() }} && test -e {{ rundir }}/{{ mpas_init.namelist.update_values.data_sources.config_met_prefix }}:{{ cycle.strftime("%Y-%m-%d_%H") }}'
+      join: '{{ rundir }}/slurm.ungrib'
       native: -M c6
-      nodes: 1:ppn=8
+      nodes: 1:ppn={{ init_cores }}
       partition: batch
       walltime: "00:01:00"
 yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
