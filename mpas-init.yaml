@@ -19,7 +19,7 @@ mpas_init:
     mpicmd: srun
   files_to_copy:
     graph.info.part.{{ mpas_init.execution.batchargs.cores }}: '{{ assets }}/x1.2562.graph.info.part.{{ mpas_init.execution.batchargs.cores }}'
-    static.nc: '{{ assets}}/x1.2562.static.nc'
+    static.nc: '{{ assets }}/x1.2562.static.nc'
     stream_list.atmosphere.diagnostics: '{{ mpasdir }}/stream_list.atmosphere.diagnostics'
     stream_list.atmosphere.output: '{{ mpasdir }}/stream_list.atmosphere.output'
     stream_list.atmosphere.surface: '{{ mpasdir }}/stream_list.atmosphere.surface'
