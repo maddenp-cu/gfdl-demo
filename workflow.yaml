@@ -66,6 +66,13 @@ platform:
   account: '{{ account }}'
   scheduler: '{{ scheduler }}'
 rundir: '{{ runroot }}/05'
+task_defaults: &task_defaults
+  attrs:
+    cycledefs: default
+    maxtries: 1
+  account: '{{ account }}'
+  native: -M c6
+  walltime: "00:01:00"
 ungrib:
   execution:
     executable: ungrib
@@ -87,10 +94,7 @@ workflow:
     value: '{{ rundir }}/rocoto.log'
   tasks:
     task_mpas_init:
-      attrs:
-        cycledefs: default
-        maxtries: 1
-      account: '{{ account }}'
+      <<: *task_defaults
       command: '
       {{ activate }}
       && uw mpas_init run -c {{ config }} --cycle {{ cycle.isoformat() }}
@@ -98,24 +102,15 @@ workflow:
       '
       dependency: {taskdep: {attrs: {task: ungrib}}}
       join: '{{ rundir }}/slurm.mpas_init'
-      native: -M c6
-      nodes: 1:ppn=1
-      partition: batch
-      walltime: "00:01:00"
+      nodes: 1:ppn={{ init_cores }}
     task_ungrib:
-      attrs:
-        cycledefs: default
-        maxtries: 1
-      account: '{{ account }}'
+      <<: *task_defaults
       command: '
       {{ activate }}
       && uw ungrib run -c {{ config }} --cycle {{ cycle.isoformat() }}
       && test -e {{ rundir }}/{{ mpas_init.namelist.update_values.data_sources.config_met_prefix }}:{{ cycle.strftime("%Y-%m-%d_%H") }}
       '
       join: '{{ rundir }}/slurm.ungrib'
-      native: -M c6
-      nodes: 1:ppn={{ init_cores }}
-      partition: batch
-      walltime: "00:01:00"
+      nodes: 1:ppn=1
 yyyymmdd: '{{ cycle.strftime("%Y%m%d") }}'
 yyyymmddhhmm: '{{ cycle.strftime("%Y%m%d%H%M") }}'
