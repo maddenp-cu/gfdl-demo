@@ -5,4 +5,4 @@ bash Miniforge3-Linux-x86_64.sh -bfp conda
 rm Miniforge3-Linux-x86_64.sh
 source conda/etc/profile.d/conda.sh
 conda activate
-conda create -y -n demo -c paul.madden rocoto ungrib uwtools
+conda create -y -n demo -c paul.madden -c ufs-community rocoto ungrib uwtools
